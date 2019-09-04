@@ -1,0 +1,151 @@
+---
+title: "tashu"
+author: "JiWon Min"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{tashu}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+```{r echo = FALSE}
+tashudata_installed <- requireNamespace("tashudata", quietly=TRUE)
+if (!tashudata_installed) {
+    knitr::opts_chunk$set(eval = FALSE)
+    msg <- paste("Examples in this vignette can be executed when", 
+                 "'tashudata' package be installed. ",
+                 "This working environment don't have 'tashudata' package",
+                 "All R code below would not be executed normally.",
+                 "Please Use this package after installing 'tashudata' package.")
+    msg <- paste(strwrap(msg), collapse="\n")
+    message(msg)
+}
+```
+
+```{r echo = FALSE, message = FALSE, warning = FALSE}
+library(tashudata)
+library(tashu)
+```
+
+## Installation : tashu
+Package 'tashu' provides functions that analyze bicycle rental history and predict amount of rental on specific station.
+It can be installed by using github.
+Example R code is below.
+
+``` {r eval=FALSE}
+library(devtools)
+devtools::install_github("zeee1/Tashu_Rpackage")
+```
+
+## Installation : "tashudata" package
+Package 'tashudata' should be installed by using 'drat' package before calling analysis function.
+tashudata contains some data such as bicycle rental history, weather and bicycle station information for 3 years.
+Functions of package 'tashu' uses data on 'tashudata'.
+
+``` {r eval=FALSE}
+library(drat)
+addRepo("zeee1")
+install.packages("tashudata")
+```
+
+
+## 1. Introduction
+ The public bicycle system is spreading globally as a green public transportation. In major cities around the world, public bicycle systems are leading to the effects of distribution of public transportation demand and the increase of citizens' exercise.  Bicycle arrangement on time is needed for operating this system smoothly. To know time when bicycle would be moved, Analyzing citizens' bicycle rental history is neccessary.
+This package provides example functions analyzing bicycle rental history and predicting amount of rental. User can know daily and monthly bicycle rental pattern and prediction way.
+
+
+## 2. Data
+Package 'tashudata' provides 3 types of dataset.
+
+1.    Tashu Data
+: Bicycle rental history on Tashu from 2013 to 2015. Data is consisted of "RENT STATION, RENT DATE, RETURN STATION, RETURN DATE"
+* tashu : Rental/Return record from 2013 to 2015.
+
+```{r}
+head(tashudata::tashu, n = 5)
+```
+
+2.    Tashu Station Data
+: By 2014 there were 144 bicycle stations on "Tashu" system. In this package, only the existing data of 144 stations are considered. Data is consisted of "NUM(Number of station), NUMOFBIKE_RACK(Number of Bike rack), GEODATA_lat(Latitude of station), GEODATA_lon(Longitude of station)"
+
+* tashuStation : data of 144 Stations on Tashu system. 
+```{r}
+head(tashudata::tashuStation, n = 5)
+```
+
+3.    Weather Data
+: Weather data In Daejeon from 2013 to 2015. It is consisted of "datetime, temperature, rainfall, windspeed, wind direction, humidity, Dew point temperature, Local Pressure, Sea surface Pressure, Sunshine, Solar Radiation, Snowfall, Ground Temperature"
+
+* weather : weather data in Daejeon from 2013 to 2015
+
+```{r}
+head(tashudata::weather, n = 5)
+```
+
+## 3. Analysis function
+
+This package provides some functions that analyze bicycle rental/return history. We implements functions showing popular top 10 stations, paths and change of rental amount according to day and month.
+
+1.    top10_stations()
+: This function shows top 10 stations for 3 years.
+
+```{r, fig.width=7,fig.height=5}
+top10_stations()
+```
+
+2.    top10_paths()
+: This function shows top 10 paths for 3 years.
+
+```{r, fig.width=7,fig.height=5}
+top10_paths()
+```
+
+3.    daily_bicycle_rental()
+: This function shows daily average amount of bicycle rental.
+
+```{r, fig.width=7,fig.height=5}
+daily_bicycle_rental()
+```
+
+4.    monthly_bicycle_rental()
+: This function shows monthly bicycle usage pattern.
+
+```{r, fig.width=7,fig.height=5}
+monthly_bicycle_rental()
+```
+
+
+## 4. Prediction stations
+
+ This package provides functions that create train/test dataset and predict bicycle rental amount. Bicycle rental/return history and weather data would be preprocessed to train/test dataset for prediction by create_train_dataset() and create_test_dataset(). After creating train/test dataset, Users can create prediction model(create_train_model()) and predict hourly rental amount of test dataset(predict_bike_rental()). 
+
+1.    create_train_dataset(station_number)
+: This function generates training dataset for the random forest prediction model. This function preprocesses the bicycle rental history and weather data so that compute hourly rental amount on "station_number" station from 2013 to 2014. "station_number" must be from 1 to 144. The example source code is below.
+
+```{r}
+train_dataset <- create_train_dataset(1)
+head(train_dataset, n = 5)
+```
+
+2.    create_test_dataset(station_number)
+: This function generates test dataset that would be used for prediction.  This function preprocesses the bicycle rental history and weather data so that compute hourly rental amount on "station_number" station in 2015. "station_number" must be from 1 to 144.
+ 
+```{r}
+test_dataset <- create_test_dataset(1)
+head(test_dataset, n = 5)
+```
+
+3.    create_train_model(train_dataset)
+: This function takes training dataset as parameters and creates random-forest prediction model. Below source code is example.
+ 
+```{r}
+rf_model <- create_train_model(train_dataset)
+```
+
+4.    predict_bicycle_rental(rf_model, test_dataset)
+: This function predict amount of bicycle rental in 2015 by using rf_model trained with dataset in 2013, 2014. 
+
+```{r}
+predict_result <- predict_bicycle_rental(rf_model, test_dataset)
+head(predict_result, n = 5)
+```
