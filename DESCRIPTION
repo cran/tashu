@@ -1,7 +1,7 @@
 Package: tashu
 Type: Package
 Title: Analysis and Prediction of Bicycle Rental Amount
-Version: 0.1.0
+Version: 0.1.1
 Authors@R: person("Jiwon", "Min", email = "miw5281@gmail.com", role = c("aut", "cre"))
 Maintainer: Jiwon Min <miw5281@gmail.com>
 Description: Provides functions for analyzing citizens' bicycle usage pattern and predicting rental amount on specific conditions.
@@ -22,10 +22,10 @@ Imports: ggplot2, lubridate, dplyr, randomForest, plyr, reshape2,
 Suggests: knitr, rmarkdown, tashudata
 Additional_repositories: https://zeee1.github.io/drat
 VignetteBuilder: knitr
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.1
 Depends: R (>= 3.5.0)
 NeedsCompilation: no
-Packaged: 2019-09-03 13:40:05 UTC; miw52
+Packaged: 2021-01-13 09:03:15 UTC; miw52
 Author: Jiwon Min [aut, cre]
 Repository: CRAN
-Date/Publication: 2019-09-04 09:30:02 UTC
+Date/Publication: 2021-01-13 09:50:02 UTC
